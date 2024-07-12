@@ -21,7 +21,6 @@ async function main() {
         },
       });
     }
-
     await prisma.user.createMany({
       data: [
         {
@@ -40,12 +39,10 @@ async function main() {
       ],
     });
     console.log("Default users created successfully.");
-
   } catch (error) {
     console.error("Error fetching products:", error);
   }
 }
-
 main()
   .catch((e) => {
     console.error(e);
