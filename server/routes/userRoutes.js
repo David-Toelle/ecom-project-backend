@@ -4,7 +4,7 @@ const { register, login, getMe, updateUser } = require ("../controllers/userCont
 
 // Register and Login routes
 router.post("/register", register);
-router.post("/login",authMiddleware, login);
+router.post("/login", login);
 
 // Get current user route with authMiddleware
 router.get("/me", authMiddleware, getMe);

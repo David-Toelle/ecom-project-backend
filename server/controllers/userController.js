@@ -9,7 +9,7 @@ const register = async (req, res, next) => {
   try {
     const { firstName, lastName, email, password } = req.body;
     const token = await registerQuery(firstName, lastName, email, password);
-    res.status(201).send({token, user:{firstName, lastName, email }  } );
+    res.status(201).send({token,} );
   } catch (error) {
     next(error);
   }
@@ -17,10 +17,9 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password,} = req.body;
     const token = await loginQuery(email, password);
-    const user = await getUserByIdQuery(req.user.id);
-    res.status(200).send({ token, user,});
+    res.status(200).send({ token,});
   } catch (error) {
     next(error);
   }
