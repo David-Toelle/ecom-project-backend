@@ -12,6 +12,8 @@ async function addToCartQuery(userId, productId, quantity) {
   console.log("adding to cart...");
   try {
     console.log("1");
+    console.log("add to cart info ...");
+    console.log(userId, productId, quantity);
     let cart = await prisma.cart.findUnique({
       where: { userId },
       include: { items: true }, // Include items in the cart for easy manipulation
