@@ -10,21 +10,31 @@ async function getCartQuery(userId) {
 
 async function addToCartQuery(userId, productId, quantity) {
   console.log("adding to cart...");
+  let cart = null
   try {
     console.log("1");
     console.log("add to cart info ...");
     console.log(userId, productId, quantity);
 
     try {
-      let cart = await prisma.cart.findUnique({
-        where: { id: userId },
+      console.log("trying to find cart")
+      cart = await prisma.cart.findUnique({
+        where: { userId },
         include: { items: true }, // Include items in the cart for easy manipulation
       });
+      // if cart null then throw new error
+      if (cart ===null) {
+        throw new Error
+      }
+      console.log("found cart")
+      console.log("CART: ", cart);
     } catch (error) {
+      console.log("could not find  to cart")
+      console.log("trying to create new cart")
       cart = await prisma.cart.create({
         data: { userId },
       });
-      console.log(cart)
+      console.log("CART: ",cart)
       console.log(error.message);
     }
    
@@ -56,8 +66,11 @@ async function addToCartQuery(userId, productId, quantity) {
         where: { userId },
         include: { items: true },
       });
-   
-      return { cartItem: newCartItem, cart: updatedCart };
+      console.log("New cart item:", newCartItem);
+      console.log("Updated cart:", updatedCart);
+      return {
+        newCartItem,updatedCart,
+      };
     }
   } catch (error) {
     console.log(error.message);

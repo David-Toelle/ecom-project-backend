@@ -29,9 +29,9 @@ const addToCart = async (req, res, next) => {
       productId: ${productId}, 
       quantity:${quantityNum}`
     );
-    const data = await addToCartQuery(userId, productId, quantityNum);
-    console.log(`data: ${data}`);
-    res.send(data);
+    const response = await addToCartQuery(userId, productId, quantityNum);
+    
+    res.send(response);
   } catch (error) {
     console.log("adding to cart failed: " + error.message);
     next(error);
