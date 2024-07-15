@@ -14,9 +14,9 @@ async function addToCartQuery(userId, productId, quantity) {
     console.log("1");
     console.log("add to cart info ...");
     console.log(userId, productId, quantity);
-    console.log("PRISMA ",prisma)
+    
     let cart = await prisma.cart.findUnique({
-      where: { userId },
+      where:  userId ,
       include: { items: true }, // Include items in the cart for easy manipulation
     });
     console.log("2");
