@@ -1,4 +1,6 @@
-const { jwt, prisma } = require("../shared/shared");
+// const { prisma } = require("../shared/shared");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 async function getCartQuery(userId) {
   const cart = await prisma.cart.findUnique({
