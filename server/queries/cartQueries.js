@@ -34,13 +34,13 @@ async function addToCartQuery(userId, productId, quantity) {
     } catch (error) {
       console.log("could not find  to cart")
       console.log("trying to create new cart")
-      cart = await prisma.cart.create({
+      cartt = await prisma.cart.create({
         data: { userId },
       });
-      console.log("CART: ",cart)
+      console.log("CART: ",cartt)
       console.log(error.message);
     }
-    console.log("cartt: ", cart)
+    console.log("cartt: ", cartt)
     // Find the existing cart item for the product, if it existst.
     
     const existingCartItem = await prisma.cartItem.findFirst({
