@@ -37,11 +37,16 @@ async function addToCartQuery(userId, productId, quantity) {
       console.log("CART: ",cart)
       console.log(error.message);
     }
-   
+    console.log("cartt: ", cart)
     // Find the existing cart item for the product, if it exists
-    const existingCartItem = cart.items.find(
-      (item) => item.productId === productId
-    );
+    const existingCartItem = await prisma.cartItem.findFirst({
+      where: {
+        productId,
+        cart: {
+          userId,
+        },
+      },
+    });
   
     if (existingCartItem) {
       // If the cart item exists, update its quantity
