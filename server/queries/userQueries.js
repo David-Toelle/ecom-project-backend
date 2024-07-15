@@ -1,13 +1,15 @@
 const { jwt, prisma } = require("../shared/shared");
+const bcrypt = require("bcrypt");
 
 // Register
 const registerQuery = async (firstName, lastName, email, password) => {
+  const hashedPassword = await bcrypt.hash(password, 10);
   const registerUser = await prisma.user.create({
     data: {
       firstName,
       lastName,
       email,
-      password,
+      password: hashedPassword,
     },
   });
   const token = jwt.sign(
@@ -32,7 +34,9 @@ const loginQuery = async (email, password) => {
       throw new Error("User not found.");
     }
 
-    if (user.password !== password) {
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
       throw new Error("Invalid login credentials.");
     }
 
@@ -45,7 +49,7 @@ const loginQuery = async (email, password) => {
         expiresIn: "1h",
       }
     );
-    console.log(token)
+    console.log(token);
     return token;
   } catch (error) {
     console.error("Error in loginQuery:", error);
@@ -66,17 +70,17 @@ const getUserByIdQuery = async (id) => {
 };
 
 const updateUserQuery = async (id, firstName, lastName, email, password) => {
-    const updatedUser = await prisma.user.update({
-      where: { id },
-      data: {
-        firstName,
-        lastName,
-        email,
-        password,
-      },
-    });
-    return updatedUser;
-  };
+  const updatedUser = await prisma.user.update({
+    where: { id },
+    data: {
+      firstName,
+      lastName,
+      email,
+      password,
+    },
+  });
+  return updatedUser;
+};
 
 module.exports = {
   registerQuery,
