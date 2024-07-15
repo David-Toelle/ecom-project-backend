@@ -77,7 +77,7 @@ async function addToCartQuery(userId, productId, quantity) {
       console.log("New cart item:", newCartItem);
       console.log("Updated cart:", updatedCart);
       return {
-        newCartItem,updatedCart,
+        cartItem: newCartItem, cart: updatedCart
       };
     }
   } catch (error) {
