@@ -14,30 +14,32 @@ async function addToCartQuery(userId, productId, quantity) {
     console.log("1");
     console.log("add to cart info ...");
     console.log(userId, productId, quantity);
-    
-    let cart = await prisma.cart.findUnique({
-      where:  {id: userId},
-      include: { items: true }, // Include items in the cart for easy manipulation
-    });
-    console.log("2");
-    if (!cart) {
+
+    try {
+      let cart = await prisma.cart.findUnique({
+        where: { id: userId },
+        include: { items: true }, // Include items in the cart for easy manipulation
+      });
+    } catch (error) {
       cart = await prisma.cart.create({
         data: { userId },
       });
+      console.log(cart)
+      console.log(error.message);
     }
-    console.log("3");
+   
     // Find the existing cart item for the product, if it exists
     const existingCartItem = cart.items.find(
       (item) => item.productId === productId
     );
-    console.log("4");
+  
     if (existingCartItem) {
       // If the cart item exists, update its quantity
       const updatedCartItem = await prisma.cartItem.update({
         where: { id: existingCartItem.id },
         data: { quantity: { increment: quantity || 1 } },
       });
-      console.log("5");
+    
       return { cartItem: updatedCartItem, cart };
     } else {
       // If the cart item does not exist, create a new one
@@ -48,13 +50,13 @@ async function addToCartQuery(userId, productId, quantity) {
           quantity: quantity || 1,
         },
       });
-      console.log("6");
+
       // Fetch the updated cart after creating a new cart item
       const updatedCart = await prisma.cart.findUnique({
         where: { userId },
         include: { items: true },
       });
-      console.log("7");
+   
       return { cartItem: newCartItem, cart: updatedCart };
     }
   } catch (error) {
