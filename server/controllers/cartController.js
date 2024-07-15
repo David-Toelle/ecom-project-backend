@@ -3,31 +3,33 @@ const {
   getCartQuery,
   deleteCartItemQuery,
   decrementQuery,
+  getCurrentQuantity,
 } = require("../queries/cartQueries");
 
 const getCart = async (req, res, next) => {
-    console.log("getting cart...")
-    const { userId } = req.params;
+  console.log("getting cart...");
+  const { userId } = req.params;
 
-    try {
-      const cart = await getCartQuery(userId);
-      res.json(cart);
-    } catch (error) {
-      res.status(500).json({ error: "Something went wrong getting cart" });
-    }
-}
+  try {
+    const cart = await getCartQuery(userId);
+    res.json(cart);
+  } catch (error) {
+    res.status(500).json({ error: "Something went wrong getting cart" });
+  }
+};
 
 const addToCart = async (req, res, next) => {
-    console.log("addToCart")
+  console.log("addToCart");
   try {
     console.log("atempting to add to cart");
     const { userId, productId, quantity } = req.params;
+    const quantityNum = parseInt(quantity);
     console.log(
       `adding to cart: userId: ${userId}, 
       productId: ${productId}, 
-      quantity:${quantity}`
+      quantity:${quantityNum}`
     );
-    const data = await addToCartQuery(userId, productId, parseInt(quantity));
+    const data = await addToCartQuery(userId, productId, quantityNum);
     console.log(`data: ${data}`);
     res.send(data);
   } catch (error) {
@@ -41,9 +43,9 @@ const deleteFromCart = async (req, res, next) => {
 
   try {
     console.log("Trying to delete...");
+    const currentQuantity = await getCurrentQuantity(cartItemId);
 
-    if (quantity && quantity > 0) {
-      // Decrement quantity if specified
+    if (currentQuantity > 0 && quantity > 0 && quantity < currentQuantity) {
       let quantityNum = parseInt(quantity);
       const decrementedItem = await decrementQuery(cartItemId, quantityNum);
       res.status(200).json(decrementedItem); // Send response with decremented item
@@ -52,6 +54,7 @@ const deleteFromCart = async (req, res, next) => {
       const deletedItem = await deleteCartItemQuery(cartItemId);
       res.status(204).json(deletedItem); // Send success response with status 204
     }
+
   } catch (error) {
     console.log("Error deleting from cart:", error.message);
     res.status(500).json({ error: "Something went wrong deleting from cart" });

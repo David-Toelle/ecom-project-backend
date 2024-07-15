@@ -9,29 +9,30 @@ async function getCartQuery(userId) {
 };
 
 async function addToCartQuery(userId, productId, quantity) {
+  console.log("adding to cart...")
   let cart = await prisma.cart.findUnique({
     where: { userId },
     include: { items: true }, // Include items in the cart for easy manipulation
   });
-
+  
   if (!cart) {
     cart = await prisma.cart.create({
       data: { userId },
     });
   }
-
+  
   // Find the existing cart item for the product, if it exists
   const existingCartItem = cart.items.find(
     (item) => item.productId === productId
   );
-
+ 
   if (existingCartItem) {
     // If the cart item exists, update its quantity
     const updatedCartItem = await prisma.cartItem.update({
       where: { id: existingCartItem.id },
       data: { quantity: { increment: quantity || 1 } },
     });
-
+    
     return { cartItem: updatedCartItem, cart };
   } else {
     // If the cart item does not exist, create a new one
@@ -42,13 +43,13 @@ async function addToCartQuery(userId, productId, quantity) {
         quantity: quantity || 1,
       },
     });
-
+    
     // Fetch the updated cart after creating a new cart item
     const updatedCart = await prisma.cart.findUnique({
       where: { userId },
       include: { items: true },
     });
-
+    
     return { cartItem: newCartItem, cart: updatedCart };
   }
 }
@@ -77,9 +78,24 @@ async function deleteCartItemQuery(cartItemId) {
   }
 }
 
+async function getCurrentQuantity(cartItemId) {
+  try {
+    const currentCartItem = await prisma.cartItem.findUnique({
+      where: { id: cartItemId },
+    });
+    console.log(currentCartItem);
+    console.log(currentCartItem.quantity);
+    const quantity = currentCartItem.quantity;
+    return quantity;
+  } catch (error) {
+    console.log("error getting current quantity:", error);
+  }
+}
+
 module.exports = {
   addToCartQuery,
   getCartQuery,
   deleteCartItemQuery,
   decrementQuery,
+  getCurrentQuantity,
 };
