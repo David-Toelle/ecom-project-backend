@@ -1,6 +1,4 @@
-// const { prisma } = require("../shared/shared");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { prisma } = require("../shared/shared");
 
 async function getCartQuery(userId) {
   const cart = await prisma.cart.findUnique({
@@ -12,7 +10,7 @@ async function getCartQuery(userId) {
 
 async function addToCartQuery(userId, productId, quantity) {
   console.log("adding to cart...");
-  let cartt = null
+  let cart = null
   try {
     console.log("1");
     console.log("add to cart info ...");
@@ -21,27 +19,27 @@ async function addToCartQuery(userId, productId, quantity) {
     try {
       console.log("trying to find cart")
       
-      cartt = await prisma.cart.findUnique({
+      cart = await prisma.cart.findUnique({
         where: { userId },
         include: { items: true }, // Include items in the cart for easy manipulation
       });
       // if cart null then throw new error
-      if (cartt ===null) {
+      if (cart ===null) {
         throw new Error
       }
       console.log("found cart")
-      console.log("CART: ", cartt);
+      console.log("CART: ", cart);
     } catch (error) {
       console.log("could not find  to cart")
       console.log(error);
       console.log("trying to create new cart")
-      cartt = await prisma.cart.create({
+      cart = await prisma.cart.create({
         data: { userId },
       });
-      console.log("CART: ",cartt)
+      console.log("CART: ",cart)
       
     }
-    console.log("cartt: ", cartt)
+    console.log("cart: ", cart)
     // Find the existing cart item for the product, if it existst.
     
     const existingCartItem = await prisma.cartItem.findFirst({
