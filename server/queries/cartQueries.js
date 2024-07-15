@@ -33,12 +33,13 @@ async function addToCartQuery(userId, productId, quantity) {
       console.log("CART: ", cartt);
     } catch (error) {
       console.log("could not find  to cart")
+      console.log(error);
       console.log("trying to create new cart")
       cartt = await prisma.cart.create({
         data: { userId },
       });
       console.log("CART: ",cartt)
-      console.log(error.message);
+      
     }
     console.log("cartt: ", cartt)
     // Find the existing cart item for the product, if it existst.
@@ -82,7 +83,7 @@ async function addToCartQuery(userId, productId, quantity) {
       };
     }
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     console.log("failed to add to cart");
   }
 }
