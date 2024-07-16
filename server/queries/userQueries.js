@@ -70,13 +70,17 @@ const getUserByIdQuery = async (id) => {
 };
 
 const updateUserQuery = async (id, firstName, lastName, email, password) => {
+  let hashedPassword = password;
+  if (password) {
+    hashedPassword = await bcrypt.hash(password, 10);
+  }
   const updatedUser = await prisma.user.update({
     where: { id },
     data: {
       firstName,
       lastName,
       email,
-      password,
+      password: hashedPassword,
     },
   });
   return updatedUser;
